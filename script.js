@@ -1,45 +1,49 @@
 const buttonConvert = document.querySelector(".convert-button");
 const selectTo = document.querySelector(".currency-select");
 
-function convertCurrency(v) {
-  const valueInput = document.querySelector(".input-currency").value;
+async function convertCurrency() {
+  const valueInput = Number(document.querySelector(".input-currency").value);
   const convertFrom = document.querySelector(".currency-value-to-convert");
   const convertTo = document.querySelector(".currency-value");
-
-  const dolarToday = 5.4;
-  const libraToday = 7.4;
 
   if (valueInput <= 0 || isNaN(valueInput)) {
     alert("Este número não pode ser convertido!");
     return;
   }
 
-  convertTo.innerHTML = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(valueInput / dolarToday);
-  convertFrom.innerHTML = new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(valueInput);
+  const currencyApi = selectTo.value;
+  const url = `https://economia.awesomeapi.com.br/json/last/${currencyApi}-BRL`;
 
-  switch (selectTo.value) {
-    case "dolar":
-      convertTo.innerHTML = new Intl.NumberFormat("en-US", {
-        style: "currency",
-        currency: "USD",
-      }).format(valueInput / dolarToday);
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
 
-      break;
-    case "libra":
-      convertTo.innerHTML = new Intl.NumberFormat("de-DE", {
-        style: "currency",
-        currency: "GBP",
-      }).format(valueInput / libraToday);
-      break;
+    const key = `${currencyApi}BRL`;
+    const rate = parseFloat(data[key].bid);
 
-    default:
-      break;
+    const convertedValue = valueInput / rate;
+
+    let options = {
+      style: "currency",
+      currency: currencyApi,
+    };
+
+    if (currencyApi === "BTC") {
+      options.minimumFractionDigits = 6;
+      options.maximumFractionDigits = 8;
+    }
+
+    convertTo.innerHTML = new Intl.NumberFormat("en-US", options).format(
+      convertedValue
+    );
+
+    convertFrom.innerHTML = new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(valueInput);
+  } catch (error) {
+    console.error("Erro ao buscar a cotação:", error);
+    alert("Não foi possível obter a cotação.");
   }
 }
 
@@ -49,15 +53,19 @@ function changeCurrency() {
   const nameTo = document.getElementById("currency-name");
 
   switch (selectTo.value) {
-    case "dolar":
+    case "USD":
       nameTo.innerHTML = "Dolar";
       imgTo.src = "./assets/dolar.png";
 
       break;
 
-    case "libra":
+    case "GBP":
       nameTo.innerHTML = "Libra";
       imgTo.src = "./assets/libra.png";
+      break;
+    case "BTC":
+      nameTo.innerHTML = "Bitcoin";
+      imgTo.src = "./assets/bitcoin.png";
       break;
 
     default:

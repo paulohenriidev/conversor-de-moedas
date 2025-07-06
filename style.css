@@ -14,14 +14,16 @@ body {
   width: 200px;
   display: block;
   margin: 20px auto;
+  max-width: 100%;
 }
 
 main {
-  width: 30%;
   background: #f4f4f4;
   border-radius: 20px;
   margin: 0 auto 40px;
   padding: 44px 24px 23px;
+  width: 100%;
+  max-width: 500px;
 }
 
 label {
@@ -46,10 +48,16 @@ input {
   cursor: pointer;
 }
 
+.boxButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 button {
   background: #52dabe;
   border-radius: 5px;
-  width: 100%;
+  width: 60%;
   border: none;
   height: 48px;
   color: #ffffff;
@@ -74,11 +82,14 @@ section {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .arrow-img {
   transform: rotate(270deg);
   margin: 15px 0;
+  max-width: 30px;
 }
 
 .currency-box {
@@ -98,4 +109,35 @@ section {
   color: #555555;
   font-weight: 700;
   font-size: 20px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  main {
+    padding: 32px 20px;
+    max-width: 90%;
+  }
+
+  button {
+    width: 80%;
+  }
+
+  .arrow-img {
+    transform: rotate(360deg);
+  }
+
+  section {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .currency-value,
+  .currency-value-to-convert {
+    font-size: 18px;
+  }
+
+  button {
+    font-size: 16px;
+  }
 }
